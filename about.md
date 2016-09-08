@@ -4,6 +4,6 @@ title: About
 permalink: /about/
 ---
 
-I am freelance developer. Currently doing more in backend, actually in Python and Django.
+I am a architech of big data. Mainly focus on hadoop, hbase, etc.
 
-email: agus[at]python.web.id
+email: pengchao.free[at]qq.com
