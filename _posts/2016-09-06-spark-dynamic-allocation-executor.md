@@ -10,6 +10,7 @@ categories: [spark, yarn]
 
 ## Server Config
 ### Set up an **_external shuffle service_** on each worker node.
+
 这是为了在删除shuffle executor之后，不删除其写的数据。
 1. 确保编译spark的时候加入了-Dyarn参数。
 2. 找到spark-<version>-yarn-shuffle.jar，应该在$SPARK_HOME/lib下面
