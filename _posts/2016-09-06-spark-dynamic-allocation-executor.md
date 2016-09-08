@@ -1,11 +1,8 @@
 ---
 layout: post
-date: {}
+date: 2016-09-06
 title: 跑spark job的时候，如何配置自动分配executor。
-categories:
-  - spark
-  - yarn
-published: true
+categories: [spark, yarn]
 ---
 ## Application Config
 - Set **_spark.dynamicAllocation.enabled_** to **_true_**
