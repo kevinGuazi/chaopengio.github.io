@@ -137,6 +137,44 @@ layoutVersion=-56
 然后在选择3，4中，我选择了4。没有太多的比较，只是觉得4工作量虽大，但是不涉及到journalnode，可能会更好些，而且也期待数据不会丢失。
 于是，在每台机修改了24个文件之后，终于成功的启动了。
 
+在启动standby namenode的时候，又遇到了如下错误
+```shell
+2016-08-31 19:55:56,093 FATAL org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer: Unknown error encountered while tailing edits. Shutting down standby NN.
+java.io.IOException: There appears to be a gap in the edit log.  We expected txid 36229333, but got txid 36230786.
+        at org.apache.hadoop.hdfs.server.namenode.MetaRecoveryContext.editLogLoaderPrompt(MetaRecoveryContext.java:94)
+        at org.apache.hadoop.hdfs.server.namenode.FSEditLogLoader.loadEditRecords(FSEditLogLoader.java:215)
+        at org.apache.hadoop.hdfs.server.namenode.FSEditLogLoader.loadFSEdits(FSEditLogLoader.java:143)
+        at org.apache.hadoop.hdfs.server.namenode.FSImage.loadEdits(FSImage.java:837)
+        at org.apache.hadoop.hdfs.server.namenode.FSImage.loadEdits(FSImage.java:818)
+        at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer.doTailEdits(EditLogTailer.java:232)
+        at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer$EditLogTailerThread.doWork(EditLogTailer.java:331)
+        at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer$EditLogTailerThread.access$200(EditLogTailer.java:284)
+        at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer$EditLogTailerThread$1.run(EditLogTailer.java:301)
+        at org.apache.hadoop.security.SecurityUtil.doAsLoginUserOrFatal(SecurityUtil.java:415)
+        at org.apache.hadoop.hdfs.server.namenode.ha.EditLogTailer$EditLogTailerThread.run(EditLogTailer.java:297)
+2016-08-31 19:55:56,094 INFO org.apache.hadoop.util.ExitUtil: Exiting with status 1
+```
+
+解决方案:
+在active namenode上savenamespace
+```shell
+hdfs dfsadmin -safemode enter
+hdfs dfsadmin -saveNamespace
+hdfs dfsadmin -safemode leave
+```
+
+然后在standby namenode上拿到最新的fsimage
+```shell
+hdfs namenode -bootstrapStandby -force
+```
+
+然后start namenode就可以了
+```shell
+hadoop-daemon.sh start namenode
+```
+
+Ref: [https://community.hortonworks.com/questions/34636/unable-to-restrat-standby-namenode.html](https://community.hortonworks.com/questions/34636/unable-to-restrat-standby-namenode.html)
+
 ## 反思
 - 在production 环境中，一定要配置dfs.namenode.support.allow.format 为false。
 - 权限管理非常重要。（这一点还没想好如何做）
