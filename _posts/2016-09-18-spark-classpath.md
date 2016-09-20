@@ -47,11 +47,14 @@ Executor的加载远比Driver的要复杂。
  - **Executor**: 如果用 **--jars**，需要注意和hadoop中和spark-assembly的类冲突问题，如果需要优先加载，通过 **spark.executor.extraClassPath** 方式进行配置。
 
 ## Guava 依赖
+
+|-----+-----|
 | Package | Guava Version |
 |:---------:|:--------------:|
 |Hadoop-2.7.2| 11.0.2|
 |Hbase-1.1.5| 12.0.1|
 |Spark-core_2.11-1.6.2|14.0.1|
+|-----+-----|
 
 每个package所依赖的guava版本不同，还好，我的spark job中不曾遇到更高版本的guava。所以该job的pom.xml中exclue所有guava包，并且在spark-submit中加上 **--driver-class-path /path/to/guava-14.0.jar**。
 
