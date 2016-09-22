@@ -20,18 +20,67 @@ Canal Client 负责接收Canal Server的数据，转存到kafka中。
 ## Q&A
 
 #### Canal Server 挂掉，重启后是否不丢数据
+**测试流程**
+1. 每秒给mysql insert一条数据
+2. 打开client，Server，kafka consumer
+3. kill server，open server，看数据是否有丢失，或重复
+
+**测试现象及结果**
+数据没有丢，server 挂掉之后，client也挂掉了。并且重启无效，重启后提示没有alive server。
 
 #### Canal Client 挂掉，重启后是否不丢数据
+**测试流程**
+1. 每秒给mysql insert一条数据
+2. 打开client，Server，kafka consumer
+3. kill client，open client，看数据是否有丢失，或重复
+
+**测试现象及结果**
+数据并没有丢，但是，client restart之后，有一段时间没有处理数据。怀疑是之前的挂掉之后在zk中的状态并没有改变。
+
+**ZK观测**
+client close 状态
+
+~~~ shell
+[zk: localhost:2181(CONNECTED) 6] ls /otter/canal/destinations/example/1001
+[cursor]
+
+[zk: localhost:2181(CONNECTED) 8] get /otter/canal/destinations/example/1001/cursor
+{"@type":"com.alibaba.otter.canal.protocol.position.LogPosition","identity":{"slaveId":-1,"sourceAddress":{"address":"192.168.10.24","port":3306}},"postion":{"included":false,"journalName":"mysql-bin.000016","position":54624,"timestamp":1474532405000}}
+~~~
+
+这个时候 `position=54624` 然后往mysql中插入一条数据，之后，查看ZK，状态未变, `position=54624`。
+
+说明，**_cursor_ 中 _position_ 存放的乃是当前 client 消费的位置**。
+
+然后，打开client
+
+~~~ shell
+[zk: localhost:2181(CONNECTED) 11] ls /otter/canal/destinations/example/1001
+[cursor, running]
+
+[zk: localhost:2181(CONNECTED) 12] get /otter/canal/destinations/example/1001/running
+{"active":true,"address":"192.168.10.24:35579","clientId":1001}
+
+[zk: localhost:2181(CONNECTED) 13] get /otter/canal/destinations/example/1001/cursor
+{"@type":"com.alibaba.otter.canal.protocol.position.LogPosition","identity":{"slaveId":-1,"sourceAddress":{"address":"192.168.10.24","port":3306}},"postion":{"included":false,"journalName":"mysql-bin.000016","position":54855,"timestamp":1474532678000}}
+~~~
+
+此时 _/otter/canal/destinations/example/1001_ 下多了一个running，里面记录了，被谁在消费。并且 `position=54855`, position改变了，查看client日志，确实已经被消费了。
+
+此时，kill client，查看ZK，发现 _/otter/canal/destinations/example/1001_ 下依然还有 `running`，过了一段时间，大概一分钟后，running消失。
+
+**结论：**
+- client 的 HA 通过 ZK 下的 _/otter/canal/destinations/example/1001/running_ 来控制。Heart Beat大概为1分钟，未找到相应配置。
+- client 消费的postion 同步到 _/otter/canal/destinations/example/1001/cursor_ 下。
+- client 被kill掉，数据不会丢。不知道是否会重复。重复与否需要看client server更新ZK时间，默认为1s。所以可能会重复最多1s内处理的数据。
+
+#### 两个Canal Server 一起消费，会不会数据不全
 
 #### Canal Server 端如何手动指定binlog offset
 
 #### Canal Client 端如何手动指定binlog offset
 
-#### 两个Canal Server 一起消费，会不会数据不全
-
-#### HA模式下，Canal Server被kill掉后是否会丢数据
-
-#### HA模式下，Canal Client被kill掉后是否会丢数据
+#### Mysql 切库
 
 ## Environment
 
