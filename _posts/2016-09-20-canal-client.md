@@ -6,6 +6,7 @@ categories: [canal,hbase,kafka]
 ---
 
 ## Workflow
+======
 整个架构的workflow 如下
 
 ~~~ shell
@@ -18,26 +19,32 @@ Canal Server 会伪装成mysql slave，把BINLOG里面的数据解析出来，�
 Canal Client 负责接收Canal Server的数据，转存到kafka中。
 
 ## Q&A
+======
 
 #### Canal Server 挂掉，重启后是否不丢数据
 **测试流程**
+
 1. 每秒给mysql insert一条数据
 2. 打开client，Server，kafka consumer
 3. kill server，open server，看数据是否有丢失，或重复
 
 **测试现象及结果**
+
 数据没有丢，server 挂掉之后，client也挂掉了。并且重启无效，重启后提示没有alive server。
 
 #### Canal Client 挂掉，重启后是否不丢数据
 **测试流程**
+
 1. 每秒给mysql insert一条数据
 2. 打开client，Server，kafka consumer
 3. kill client，open client，看数据是否有丢失，或重复
 
 **测试现象及结果**
+
 数据并没有丢，但是，client restart之后，有一段时间没有处理数据。怀疑是之前的挂掉之后在zk中的状态并没有改变。
 
 **ZK观测**
+
 client close 状态
 
 ~~~ shell
@@ -70,6 +77,7 @@ client close 状态
 此时，kill client，查看ZK，发现 _/otter/canal/destinations/example/1001_ 下依然还有 `running`，过了一段时间，大概一分钟后，running消失。
 
 **结论：**
+
 - client 的 HA 通过 ZK 下的 _/otter/canal/destinations/example/1001/running_ 来控制。Heart Beat大概为1分钟，未找到相应配置。
 - client 消费的postion 同步到 _/otter/canal/destinations/example/1001/cursor_ 下。
 - client 被kill掉，数据不会丢。不知道是否会重复。重复与否需要看client server更新ZK时间，默认为1s。所以可能会重复最多1s内处理的数据。
@@ -83,6 +91,7 @@ client close 状态
 #### Mysql 切库
 
 ## Environment
+======
 
 |---
 |:------|:------|
@@ -95,6 +104,7 @@ client close 状态
 | Total | 7 |
 
 ## Build
+======
 
 <div> Canal Server and Canal Client use different version of protobuf. You might facing the following problem </div>
 
@@ -131,6 +141,7 @@ mvn clean install -Dmaven.test.skip -Denv=release
 ~~~
 
 ## Deploy
+======
 
 #### canal.properties Config
 
