@@ -5,6 +5,7 @@ title: Sync Mysql Data to Hbase or Kafka.
 categories: [canal,hbase,kafka]
 ---
 
+------
 ## Workflow
 ------
 整个架构的workflow 如下
@@ -18,6 +19,7 @@ Canal Server 会伪装成mysql slave，把BINLOG里面的数据解析出来，�
 
 Canal Client 负责接收Canal Server的数据，转存到kafka中。
 
+------
 ## Q&A
 ------
 
@@ -102,6 +104,7 @@ Everything is good！
 
 #### Mysql 切库
 
+------
 ## Environment
 ------
 
@@ -115,6 +118,7 @@ Everything is good！
 |===
 | Total | 7 |
 
+------
 ## Build
 ------
 
@@ -152,6 +156,7 @@ Finally, you can build canal. Or you can **SKIP** the steps above. Instead, you 
 mvn clean install -Dmaven.test.skip -Denv=release
 ~~~
 
+------
 ## Deploy
 ------
 
