@@ -83,10 +83,22 @@ client close 状态
 - client 被kill掉，数据不会丢。不知道是否会重复。重复与否需要看client server更新ZK时间，默认为1s。所以可能会重复最多1s内处理的数据。
 
 #### 两个Canal Server 一起消费，会不会数据不全
+1. 创建两个server，同时读取一张表
+2. 同时打开两个server
+3. 分别消费两个server
+4. 比较两个client的数据
+
+Ya，no problem！
 
 #### Canal Server 端如何手动指定binlog offset
+1. 每秒给mysql insert一条数据， 过一小时后停止。记录start，end时间
+2. 打开client消费所有数据
+3. set `canal.instance.master.journal.name` and `canal.instance.master.timestamp`
+4. stop client, stop server
+5. In ZK, remove canal info. `rmr /otter`
+6. start server, start client.
 
-#### Canal Client 端如何手动指定binlog offset
+Everything is good！
 
 #### Mysql 切库
 
