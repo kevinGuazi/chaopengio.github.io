@@ -6,7 +6,7 @@ categories: [canal,hbase,kafka]
 ---
 
 ## Workflow
-======
+------
 整个架构的workflow 如下
 
 ~~~ shell
@@ -19,7 +19,7 @@ Canal Server 会伪装成mysql slave，把BINLOG里面的数据解析出来，�
 Canal Client 负责接收Canal Server的数据，转存到kafka中。
 
 ## Q&A
-======
+------
 
 #### Canal Server 挂掉，重启后是否不丢数据
 **测试流程**
@@ -103,7 +103,7 @@ Everything is good！
 #### Mysql 切库
 
 ## Environment
-======
+------
 
 |---
 |:------|:------|
@@ -116,7 +116,7 @@ Everything is good！
 | Total | 7 |
 
 ## Build
-======
+------
 
 <div> Canal Server and Canal Client use different version of protobuf. You might facing the following problem </div>
 
@@ -153,7 +153,7 @@ mvn clean install -Dmaven.test.skip -Denv=release
 ~~~
 
 ## Deploy
-======
+------
 
 #### canal.properties Config
 
