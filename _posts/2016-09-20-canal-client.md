@@ -104,6 +104,21 @@ Everything is good！
 
 #### Mysql 切库
 
+#### server 添加配置，生效
+1. 往两个数据库写数据
+2. 打开canal server，canal client
+3. 添加好配置，copy到server config中
+4. 起一个新的数据库client，观察消费情况。
+
+Everything went better than expected.
+
+#### server起两个instance读同一张表，2个client分别访问两个instance
+1. 往表里写数据
+2. 配置好两个instance，with different `canal.instance.mysql.slaveId`
+3. 配置两个client分别读取两个instance的数据。
+
+Everthing went better than expected. 两个读取的数据是一致的。
+
 ------
 
 ## Environment
