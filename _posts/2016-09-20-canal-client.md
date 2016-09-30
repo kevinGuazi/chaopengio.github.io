@@ -232,6 +232,7 @@ mvn clean install -Dmaven.test.skip -Denv=release
 | canal.instance.defaultDatabaseName | | |
 | canal.instance.connectionCharset | mysql 数据解析编码 | UTF-8 |
 | canal.instance.filter.regex	| mysql 数据解析关注的表，Perl正则表达式. | dbname\\.[a-zA-Z][a-zA-Z0-9_]* |
+{:.table table-bordered}
 
 **mysql链接时的起始位置**
 
