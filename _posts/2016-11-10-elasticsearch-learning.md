@@ -27,7 +27,6 @@ term用于匹配完全一致的值。
 通常，在查找完全一致的值的时候，我们并不需要做scoring。我们只是想要查找，包含或者不包含的情况。这样我们需要用`constant_score`来执行`term`
 
 ~~~json
-GET /my_store/products/_search
 {
     "query" : {
         "constant_score" : {
@@ -115,7 +114,6 @@ Bool Filter 包含4种section。
 上面sql对应的query为
 
 ~~~json
-GET /my_store/products/_search
 {
    "query" : {
       "constant_score" : {
@@ -146,7 +144,6 @@ WHERE  productID      = "KDKE-B-9947-#kL5"
 ~~~
 
 ~~~json
-GET /my_store/products/_search
 {
    "query" : {
       "constant_score" : {
@@ -172,7 +169,6 @@ GET /my_store/products/_search
 `term`是用来查找单一值的，但当我们需要查找多个值的时候该怎么办？这个时候我们可以用`terms`来做。
 
 ~~~json
-GET /my_store/products/_search
 {
     "query" : {
         "constant_score" : {
@@ -193,7 +189,6 @@ GET /my_store/products/_search
 如果想要完全匹配，一般来说需要做第二个filter，限制这个field的term个数。
 
 ~~~json
-GET /my_index/my_type/_search
 {
     "query": {
         "constant_score" : {
@@ -217,7 +212,6 @@ GET /my_index/my_type/_search
 - lte: <= less than or equal to
 
 ~~~json
-GET /my_store/products/_search
 {
     "query" : {
         "constant_score" : {
@@ -245,7 +239,6 @@ range对比string是按字典序。
 使用方法
 
 ~~~json
-GET /my_index/posts/_search
 {
     "query" : {
         "constant_score" : {
@@ -261,7 +254,6 @@ GET /my_index/posts/_search
 使用方法
 
 ~~~json
-GET /my_index/posts/_search
 {
     "query" : {
         "constant_score" : {
