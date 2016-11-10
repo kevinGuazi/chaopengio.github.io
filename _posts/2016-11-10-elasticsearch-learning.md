@@ -243,6 +243,7 @@ range对比string是按字典序。
 
 ##### Exists query
 使用方法
+
 ~~~json
 GET /my_index/posts/_search
 {
@@ -258,6 +259,7 @@ GET /my_index/posts/_search
 
 ##### missing query
 使用方法
+
 ~~~json
 GET /my_index/posts/_search
 {
